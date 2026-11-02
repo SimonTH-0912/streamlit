@@ -5,12 +5,14 @@ CSV 파일을 업로드해 데이터 개요, 품질, 필터 결과, 그래프, �
 ## 실행 방법
 
 ```powershell
-cd csv_data_analyzer
+cd deploy
 python -m pip install -r requirements.txt
-streamlit run app.py
+python -m streamlit run my_csv_reader.py
 ```
 
 브라우저가 자동으로 열리지 않으면 터미널에 표시된 `Local URL`을 여세요.
+
+CSV 파일이 없어도 사이드바의 **샘플 데이터로 시작**을 선택해 기능을 확인할 수 있습니다. 샘플은 실제 매출이 아닌 가상 데이터입니다. 파일을 업로드하면 업로드한 파일이 사용됩니다.
 
 ## 주요 기능
 
