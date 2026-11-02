@@ -87,15 +87,20 @@ def apply_filters(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
 with st.sidebar:
     st.header("파일 및 필터")
     uploaded_file = st.file_uploader("CSV 파일 업로드", type=["csv"])
+    use_sample = st.checkbox("샘플 데이터로 시작", value=False, disabled=uploaded_file is not None)
     separator_label = st.selectbox("구분자", ["쉼표 (,)", "세미콜론 (;)", "탭 (Tab)", "파이프 (|)"])
 
-if uploaded_file is None:
-    st.info("왼쪽 사이드바에서 CSV 파일을 업로드해 주세요.")
+if uploaded_file is None and not use_sample:
+    st.info("왼쪽 사이드바에서 CSV 파일을 업로드하거나 샘플 데이터로 시작해 주세요.")
     st.stop()
 
 separator = {"쉼표 (,)": ",", "세미콜론 (;)": ";", "탭 (Tab)": "\t", "파이프 (|)": "|"}[separator_label]
 try:
-    df, detected_encoding = load_csv(uploaded_file.getvalue(), separator)
+    if uploaded_file is not None:
+        df, detected_encoding = load_csv(uploaded_file.getvalue(), separator)
+    else:
+        sample = "날짜,매장,방문자,매출\n월요일,강남,120,560000\n화요일,강남,145,680000\n수요일,홍대,90,420000\n목요일,홍대,110,510000\n금요일,강남,170,790000\n"
+        df, detected_encoding = load_csv(sample.encode("utf-8"), ",")
 except Exception as error:
     st.error(f"CSV 파일을 읽지 못했습니다: {error}")
     st.stop()
@@ -103,6 +108,9 @@ except Exception as error:
 if df.empty:
     st.warning("업로드한 CSV 파일에 데이터가 없습니다.")
     st.stop()
+
+if uploaded_file is None:
+    st.caption("연습용 가상 데이터입니다. 실제 매출 자료가 아닙니다.")
 
 with st.sidebar:
     st.success(f"{detected_encoding} 인코딩으로 읽었습니다.")
